@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WebSerial Controller</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: #fafafa;
+  }
+
+  svg {
+    max-width: 100%;
+    height: auto;
+    touch-action: none; /* critical for mobile */
+  }
+
+  .btn {
+    fill: #a0a0a0;
+    stroke: #333;
+    stroke-width: 2;
+    cursor: pointer;
+  }
+
+  .btn.pressed {
+    fill: #4caf50 !important;
+    transform-origin: center center;
+    transform: scale(0.9);
+    transform-box: fill-box;
+  }
+
+  .label {
+    font-size: 12px;
+    font-weight: bold;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+  }
+
+  #status {
+    margin-top: 15px;
+  }
+
+  #serialLog {
+    margin: 20px auto;
+    width: 320px;
+    height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    background: #fff;
+    font-family: monospace;
+    padding: 10px;
+    text-align: left;
+  }
+
+  button {
+    margin-top: 10px;
+    padding: 10px 15px;
+  }
+</style>
+</head>
+
+<body>
+
+<h2>WebSerial Controller</h2>
+
+<svg id="controller" viewBox="0 0 600 260">
+
+  <!-- Controller body -->
+  <rect x="10" y="10" width="580" height="240" rx="20" fill="#ddd" stroke="#333" stroke-width="4"/>
+
+  <!-- D-Pad -->
+  <rect id="btnUp" class="btn" x="80" y="60" width="40" height="40"/>
+  <rect id="btnDown" class="btn" x="80" y="140" width="40" height="40"/>
+  <rect id="btnLeft" class="btn" x="40" y="100" width="40" height="40"/>
+  <rect id="btnRight" class="btn" x="120" y="100" width="40" height="40"/>
+
+  <!-- Center buttons -->
+  <rect id="btnSelect" class="btn" x="230" y="150" width="70" height="25" rx="5"/>
+  <rect id="btnStart" class="btn" x="310" y="150" width="70" height="25" rx="5"/>
+
+  <text x="241" y="167" class="label">SELECT</text>
+  <text x="326" y="167" class="label">START</text>
+
+  <!-- A / B -->
+  <circle id="btnB" class="btn" cx="460" cy="165" r="25"/>
+  <circle id="btnA" class="btn" cx="520" cy="165" r="25"/>
+
+  <text x="455" y="170" class="label">B</text>
+  <text x="515" y="170" class="label">A</text>
+
+</svg>
+
+<div>WASD control direction. Right Shift is Select, Enter is Start, J is button B, and K is button A</div>
+<div>Left mouse click is button B and Right mouse click is button A</div>
+<br>
+<br>
+<fieldset>
+  <legend id="status">Not connected</legend>
+  <button id="connectButton">Connect Serial</button>
+  <div id="serialLog"><strong>Log:</strong><br></div>
+  <div>Button press state is sent when a button changes or every 100 ms as a keep alive</div>
+</fieldset>
+
+<script>
+const NES_BUTTONS = {
+  A: (1 << 0),
+  B: (1 << 1),
+  SELECT: (1 << 2),
+  START: (1 << 3),
+  UP: (1 << 4),
+  DOWN: (1 << 5),
+  LEFT: (1 << 6),
+  RIGHT: (1 << 7)
+};
+
+let mouseControllerState = 0;
+let keyboardControllerState = 0;
+let gamepadControllerState = 0;
+let writer = null;
+let serialPort = null;
+
+/* ---------- SERIAL ---------- */
+async function connectSerial() {
+  const status = document.getElementById("status");
+  try {
+    const port = await navigator.serial.requestPort();
+    await port.open({ baudRate: 115200 });
+    writer = port.writable.getWriter();
+    serialPort = port;
+    status.textContent = "Connected";
+  } catch (e) {
+    status.textContent = "Connection failed";
+  }
+}
+
+/* ---------- STATE ---------- */
+let lastSentState = null;
+let lastSendTime = 0;
+const SEND_INTERVAL_MS = 100;
+function updateControllerState() {
+  const now = performance.now();
+  const controllerState = mouseControllerState | keyboardControllerState | gamepadControllerState;
+  const shouldSend =
+    controllerState !== lastSentState ||
+    (now - lastSendTime) >= SEND_INTERVAL_MS;
+
+  if (!shouldSend) return;
+
+  Object.keys(map).forEach(id => {
+    const bit = map[id];
+    document.getElementById(id).classList.toggle("pressed", (controllerState & bit));
+  });
+  const byte = new Uint8Array([controllerState]);
+
+  if (writer) {
+    writer.write(byte);
+  }
+  
+  lastSentState = controllerState;
+  lastSendTime = now;
+
+  log(`0x${byte[0].toString(16).padStart(2,'0')} | ${controllerState.toString(2).padStart(8,'0')}`);
+}
+
+function log(msg) {
+  serialLog.innerHTML = msg + "<br>" + serialLog.innerHTML;
+  if (serialLog.innerHTML.length > 10000) {
+    serialLog.innerHTML = serialLog.innerHTML.slice(0, 10000);
+  }
+}
+
+/* ---------- BUTTON MAPPING ---------- */
+const map = {
+  btnUp: NES_BUTTONS.UP,
+  btnDown: NES_BUTTONS.DOWN,
+  btnLeft: NES_BUTTONS.LEFT,
+  btnRight: NES_BUTTONS.RIGHT,
+  btnA: NES_BUTTONS.A,
+  btnB: NES_BUTTONS.B,
+  btnSelect: NES_BUTTONS.SELECT,
+  btnStart: NES_BUTTONS.START
+};
+
+/* ---------- POINTER (MOBILE + MOUSE) ---------- */
+function press(id) {
+  mouseControllerState |= map[id];
+  updateControllerState();
+}
+
+function release(id) {
+  mouseControllerState &= ~map[id];
+  updateControllerState();
+}
+
+document.querySelectorAll(".btn").forEach(el => {
+  el.addEventListener("pointerdown", e => {
+    e.preventDefault();
+    e.stopPropagation(); // prevent controller pointer events from triggering when on a button
+    press(el.id);
+  });
+
+  el.addEventListener("pointerup", () => release(el.id));
+  el.addEventListener("pointermove", e => e.stopPropagation());
+  el.addEventListener("pointerleave", () => release(el.id));
+});
+
+
+const controller = document.getElementById("controller"); 
+controller.addEventListener("contextmenu", e => e.preventDefault());
+controller.addEventListener("pointerdown", (e) => {
+    if (e.button === 0 ) {
+        mouseControllerState |= map["btnB"]; // left click down for press B
+    }
+    if (e.button === 2) {
+        mouseControllerState |= map["btnA"]; // right click down for press A
+    }
+    updateControllerState();
+});
+let lastButtons = 0;
+controller.addEventListener("pointermove", (e) => {
+    if (e.buttons === 1) {
+        mouseControllerState |= map["btnB"]; // left click down for press B
+        mouseControllerState &= ~map["btnA"]; // right click up for release A
+        updateControllerState();  // keep this inside if block because movement will also trigger pointermove
+    }
+    else if (e.buttons === 2) {
+        mouseControllerState |= map["btnA"]; // right click down for press A
+        mouseControllerState &= ~map["btnB"]; // left click up for release B
+        updateControllerState();
+    }
+    else if (e.buttons === 3) {
+        mouseControllerState |= map["btnB"]; // left click down for press B
+        mouseControllerState |= map["btnA"]; // right click down for press A
+        updateControllerState();
+    }
+
+});
+controller.addEventListener("pointerup", (e) => {
+    if (e.button === 0) {
+        mouseControllerState &= ~map["btnB"]; // left click up for release B
+    }
+    if (e.button === 2) {
+        mouseControllerState &= ~map["btnA"]; // right click up for release A
+    }
+    updateControllerState();
+});
+
+
+/* ---------- KEYBOARD ---------- */
+const keyMap = {
+  KeyW: "btnUp",
+  KeyA: "btnLeft",
+  KeyS: "btnDown",
+  KeyD: "btnRight",
+  KeyJ: "btnB",
+  KeyK: "btnA",
+  ShiftRight: "btnSelect",
+  Enter: "btnStart"
+};
+
+window.addEventListener("keydown", e => {
+  const id = keyMap[e.code];
+  if (id) keyboardControllerState |= map[id];
+});
+
+window.addEventListener("keyup", e => {
+  const id = keyMap[e.code];
+  if (id) keyboardControllerState &= ~map[id];
+});
+
+
+/* ---------- GAMEPAD ---------- */
+function pollGamepad() {
+  const gp = navigator.getGamepads()[0];
+  if (gp) {
+    let newState = 0;
+
+    if (gp.buttons[12]?.pressed) newState |= NES_BUTTONS.UP;
+    if (gp.buttons[13]?.pressed) newState |= NES_BUTTONS.DOWN;
+    if (gp.buttons[14]?.pressed) newState |= NES_BUTTONS.LEFT;
+    if (gp.buttons[15]?.pressed) newState |= NES_BUTTONS.RIGHT;
+    
+    if (gp.axes[1] && gp.axes[1] < -0.5) newState |= NES_BUTTONS.UP;
+    if (gp.axes[1] && gp.axes[1] > 0.5) newState |= NES_BUTTONS.DOWN;
+        
+    if (gp.axes[0] && gp.axes[0] < -0.5) newState |= NES_BUTTONS.LEFT;
+    if (gp.axes[0] && gp.axes[0] > 0.5) newState |= NES_BUTTONS.RIGHT;
+        
+    if (gp.buttons[8]?.pressed) newState |= NES_BUTTONS.SELECT;
+    if (gp.buttons[9]?.pressed) newState |= NES_BUTTONS.START;
+
+    if (gp.buttons[0]?.pressed) newState |= NES_BUTTONS.B;
+    if (gp.buttons[3]?.pressed) newState |= NES_BUTTONS.B;
+        
+    if (gp.buttons[1]?.pressed) newState |= NES_BUTTONS.A;
+    if (gp.buttons[2]?.pressed) newState |= NES_BUTTONS.A;
+    
+    gamepadControllerState = newState;
+  }
+  // putting updateControllerState here rather than inside the if (gp) block ensures
+  // state is periodically sent as a keep alive even if no gamepad is detected
+  updateControllerState();
+  requestAnimationFrame(pollGamepad);
+}
+
+pollGamepad();
+
+document.getElementById("connectButton").addEventListener("click", connectSerial);
+</script>
+
+</body>
+</html>
