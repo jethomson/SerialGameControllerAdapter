@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include <Bluepad32.h>
 #include <stdint.h>
 #include "ControllerConfig.h"
@@ -63,6 +64,19 @@ ControllerPtr ctl;
 volatile uint8_t buttons_state = 0x00;
 uint8_t (*readController)() = nullptr;
 
+void initController(ControllerType controller_type);
+void indicateRead();
+uint8_t readDummyController();
+uint8_t readGpioGamepad();
+uint8_t readNesGamepad();
+uint8_t readSnesGamepad();
+uint8_t readPsxGamepad();
+uint8_t transferPsxByte(uint8_t byte);
+uint8_t readBluetoothController();
+void onConnectedController(ControllerPtr c);
+void onDisconnectedController(ControllerPtr c);
+void debugPrintButtons(uint8_t state);
+void controllerSelect();
 
 void initController(ControllerType controller_type) {
     switch (controller_type) {
