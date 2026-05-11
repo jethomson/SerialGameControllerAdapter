@@ -565,7 +565,18 @@ void loop() {
             // send about every 100 ms is a sort of keep alive and guards against lost transmissions
             prev_buttons_state = buttons_state;
             no_change_cnt = 0;
+
+            // instead of just sending the buttons_state a packet of data is sent to prevent
+            // noise on the serial line from being read as button presses.
+            // a packet is three bytes: START_BYTE, buttons_state, and checksum
+            // up, down, left, and right pressed at the same time is impossible on a controller,
+            // so 0b1111000 (0xF0) makes a good start byte since the buttons state byte can
+            // never be 0xF0
+            const uint8_t START_BYTE = 0xF0;
+            Serial1.write(START_BYTE);
             Serial1.write(buttons_state);
+            Serial1.write(buttons_state); // checksum
+
 #if defined DEBUG_CONSOLE
             debugPrintButtons(buttons_state);
 #endif

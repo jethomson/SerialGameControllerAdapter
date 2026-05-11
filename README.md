@@ -7,6 +7,6 @@ The pins brought out to the connectors on the CYD do not provide a lot of option
 Also Anemoia-ESP32 disables Bluetooth to conserve resources.
 To work around these limitations SerialGameControllerAdapter.ino runs on a separate ESP32 board and sends button presses to Anemoia-ESP32 running on the CYD over a serial connection (Serial1) to the connector closest to the SD card slot (3.3V, GPIO27, GPIO22, GND). 
 
-WebSerialController.html is a webpage that uses WebSerial to send button presses to Anemoia-ESP32 over the USB to serial connection (Serial0, better known as Serial).
-This webpage is nice for testing out Anemoia-ESP32 on a CYD before doing any wiring or soldering. Of course, if you want to use Anemoia-ESP32 on a CYD as a retro gaming art display piece desk toy that is always connected to your computer, then WebSerialController.html is all you need to be able to control it.  
+[WebSerialController.html](https://htmlpreview.github.io/?https://raw.githubusercontent.com/jethomson/SerialGameControllerAdapter/refs/heads/main/WebSerialController.html) is a webpage that uses WebSerial to send button presses to Anemoia-ESP32 over the USB to serial connection (Serial0, better known as Serial).
+This webpage is nice for testing out Anemoia-ESP32 on a CYD before doing any wiring or soldering. Of course, if you want to use Anemoia-ESP32 on a CYD as a retro gaming art display piece desk toy that is always connected to your computer, then WebSerialController.html is all you need to be able to control it. For everyday use, please download WebSerialController.html and use a local copy instead of using the version hosted on htmlpreview.github.io. That site is only meant for previewing web pages.
 
