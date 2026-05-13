@@ -163,7 +163,6 @@ function updateControllerState() {
     // up, down, left, and right pressed at the same time is impossible on a controller,
     // so 0b1111000 (0xF0) makes a good start byte since the buttons state byte can
     // never be 0xF0
-    const uint8_t START_BYTE = 0xF0;
     const START_BYTE = 0xF0; // impossible to press up, down, left, and right at the same time on a controller
     const packet = new Uint8Array([START_BYTE, controllerState, controllerState]); // repetition of controllerState, packet[2], serves as checksum
     writer.write(packet);
