@@ -17,6 +17,11 @@
     height: auto;
     touch-action: none; /* critical for mobile */
   }
+  
+  #controller:focus {
+    outline: none;
+  }
+
 
   .btn {
     fill: #a0a0a0;
@@ -36,6 +41,9 @@
     font-size: 12px;
     font-weight: bold;
     pointer-events: none;
+  }
+
+  .no-highlight {
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -66,9 +74,9 @@
 
 <body>
 
-<h2>WebSerial Controller</h2>
+<h2 class="no-highlight">WebSerial Controller</h2>
 
-<svg id="controller" viewBox="0 0 600 260">
+<svg id="controller" viewBox="0 0 600 260" tabindex="0">
 
   <!-- Controller body -->
   <rect x="10" y="10" width="580" height="240" rx="20" fill="#ddd" stroke="#333" stroke-width="4"/>
@@ -83,18 +91,19 @@
   <rect id="btnSelect" class="btn" x="230" y="150" width="70" height="25" rx="5"/>
   <rect id="btnStart" class="btn" x="310" y="150" width="70" height="25" rx="5"/>
 
-  <text x="241" y="167" class="label">SELECT</text>
-  <text x="326" y="167" class="label">START</text>
+  <text x="241" y="167" class="label no-highlight">SELECT</text>
+  <text x="326" y="167" class="label no-highlight">START</text>
 
   <!-- A / B -->
   <circle id="btnB" class="btn" cx="460" cy="165" r="25"/>
   <circle id="btnA" class="btn" cx="520" cy="165" r="25"/>
 
-  <text x="455" y="170" class="label">B</text>
-  <text x="515" y="170" class="label">A</text>
+  <text x="455" y="170" class="label no-highlight">B</text>
+  <text x="515" y="170" class="label no-highlight">A</text>
 
 </svg>
 
+<div class="no-highlight">
 <div>WASD control direction. Right Shift is Select, Enter is Start, J is button B, and K is button A</div>
 <div>Left mouse click is button B and Right mouse click is button A</div>
 <br>
@@ -105,6 +114,7 @@
   <div id="serialLog"><strong>Log:</strong><br></div>
   <div>Button press state is sent when a button changes or every 100 ms as a keep alive</div>
 </fieldset>
+</div>
 
 <script>
 const NES_BUTTONS = {
@@ -133,6 +143,8 @@ async function connectSerial() {
     writer = port.writable.getWriter();
     serialPort = port;
     status.textContent = "Connected";
+    const controller = document.getElementById("controller");
+    controller.focus();
   } catch (e) {
     status.textContent = "Connection failed";
   }
@@ -207,8 +219,10 @@ function release(id) {
 document.querySelectorAll(".btn").forEach(el => {
   el.addEventListener("pointerdown", e => {
     e.preventDefault();
-    e.stopPropagation(); // prevent controller pointer events from triggering when on a button
-    press(el.id);
+    e.stopPropagation(); // prevent controller pointer events from triggering when over a button in controller svg
+    if (e.button === 0 ) {
+      press(el.id);
+    }
   });
 
   el.addEventListener("pointerup", () => release(el.id));
@@ -244,7 +258,6 @@ controller.addEventListener("pointermove", (e) => {
         mouseControllerState |= map["btnA"]; // right click down for press A
         updateControllerState();
     }
-
 });
 controller.addEventListener("pointerup", (e) => {
     if (e.button === 0) {
@@ -255,7 +268,10 @@ controller.addEventListener("pointerup", (e) => {
     }
     updateControllerState();
 });
-
+controller.addEventListener("pointerleave", (e) => {
+    mouseControllerState = 0;
+    updateControllerState();
+});
 
 /* ---------- KEYBOARD ---------- */
 const keyMap = {
