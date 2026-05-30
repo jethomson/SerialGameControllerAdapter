@@ -144,10 +144,13 @@ async function connectSerial() {
     serialPort = port;
     status.textContent = "Connected";
     const controller = document.getElementById("controller");
-    controller.focus();
   } catch (e) {
     status.textContent = "Connection failed";
   }
+  // set focus back to controller
+  // otherwise the serial port chooser may still have focus
+  // and open back up if Enter is pressed
+  controller.focus();
 }
 
 /* ---------- STATE ---------- */
