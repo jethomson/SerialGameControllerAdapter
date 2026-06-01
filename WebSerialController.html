@@ -180,7 +180,17 @@ function updateControllerState() {
     // never be 0xF0
     const START_BYTE = 0xF0; // impossible to press up, down, left, and right at the same time on a controller
     const packet = new Uint8Array([START_BYTE, controllerState, controllerState]); // repetition of controllerState, packet[2], serves as checksum
-    writer.write(packet);
+    
+    writer.write(packet).catch(err => {
+      console.error("Serial write failed:", err);
+
+      if (err.name === "NetworkError") {
+        writer.releaseLock();
+        writer = null;
+        const status = document.getElementById("status");
+        status.textContent = "Connection lost";
+      }
+    });
   }
   
   lastSentState = controllerState;
@@ -369,6 +379,7 @@ function pollGamepad() {
 pollGamepad();
 
 document.getElementById("connectButton").addEventListener("click", connectSerial);
+
 </script>
 
 </body>
