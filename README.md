@@ -10,12 +10,23 @@ The motivation was to simplify controller input to a Cheap Yellow Display (CYD) 
 
 The pins brought out to the connectors on the CYD do not provide a lot of options for directly wiring a controller to the board.
 Also Anemoia-ESP32 disables Bluetooth to conserve resources.
-To work around these limitations SerialGameControllerAdapter runs on a separate ESP32 board and sends button presses to Anemoia-ESP32 running on the CYD over a serial connection (Serial1) to the connector closest to the SD card slot (3.3V, GPIO27, GPIO22, GND). 
+To work around these limitations SerialGameControllerAdapter runs on a separate ESP32 board and sends button presses to Anemoia-ESP32 running on the CYD over a serial connection (Serial1) to the connector closest to the SD card slot (3.3V, GPIO27, GPIO22, GND).
+
+See [ControllerConfig.h](https://github.com/jethomson/SerialGameControllerAdapter/blob/main/src/ControllerConfig.h) for which GPIO pins to wire to the CYD and controller. The photos above show a terminal block being used, but that was making testing different controllers easier. It is not necessary. For you ease in wiring, you will probably want to buy an NES, SNES, or PS1 extension cable and cutoff the port and a length of cable.
+
+<img src="https://raw.githubusercontent.com/jethomson/jethomson.github.io/refs/heads/main/SerialGameControllerAdapter_images/snes_nes_pinout.png" width="60%">
+
+<img src="https://raw.githubusercontent.com/jethomson/jethomson.github.io/refs/heads/main/SerialGameControllerAdapter_images/ps1_ps2_pinout.jpg" width="60%">
+
+
 
 <br>
 <br>
+<hr>
+<br>
+<br>
 
-<img src="https://raw.githubusercontent.com/jethomson/jethomson.github.io/refs/heads/main/SerialGameControllerAdapter_images/webserial_controller.png">
+<img src="https://raw.githubusercontent.com/jethomson/jethomson.github.io/refs/heads/main/SerialGameControllerAdapter_images/webserial_controller.png" width="60%">
 
 [WebSerialController.html](https://htmlpreview.github.io/?https://raw.githubusercontent.com/jethomson/SerialGameControllerAdapter/refs/heads/main/WebSerialController.html) is a webpage that uses WebSerial to send button presses to Anemoia-ESP32 over the USB cable.
 This webpage is nice for testing out Anemoia-ESP32 before doing any wiring or soldering. Of course, if you want to use Anemoia-ESP32 without a wired controller, then WebSerialController.html is all you need to control it. **No wiring is required!**
