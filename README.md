@@ -12,13 +12,11 @@ The pins brought out to the connectors on the CYD do not provide a lot of option
 Also Anemoia-ESP32 disables Bluetooth to conserve resources.
 To work around these limitations SerialGameControllerAdapter runs on a separate ESP32 board and sends button presses to Anemoia-ESP32 running on the CYD over a serial connection (Serial1) to the connector closest to the SD card slot (3.3V, GPIO27, GPIO22, GND).
 
-See [ControllerConfig.h](https://github.com/jethomson/SerialGameControllerAdapter/blob/main/src/ControllerConfig.h) for which GPIO pins to wire to the CYD and controller. The photos above show a terminal block being used, but that was making testing different controllers easier. It is not necessary. For you ease in wiring, you will probably want to buy an NES, SNES, or PS1 extension cable and cutoff the port and a length of cable.
+See [ControllerConfig.h](https://github.com/jethomson/SerialGameControllerAdapter/blob/main/src/ControllerConfig.h) for which GPIO pins to wire to the CYD and controller. The photos above show a terminal block being used, but that was for making testing different controllers easier. It is not necessary. For ease in wiring you will probably want to buy an NES, SNES, or PS1 extension cable and cutoff the port and a length of cable.
 
 <img src="https://raw.githubusercontent.com/jethomson/jethomson.github.io/refs/heads/main/SerialGameControllerAdapter_images/snes_nes_pinout.png" width="60%">
 
 <img src="https://raw.githubusercontent.com/jethomson/jethomson.github.io/refs/heads/main/SerialGameControllerAdapter_images/ps1_ps2_pinout.jpg" width="60%">
-
-
 
 <br>
 <br>
