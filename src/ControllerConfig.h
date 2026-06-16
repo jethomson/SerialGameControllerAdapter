@@ -4,7 +4,7 @@
 
 // SerialGameControllerAdapter is written with the ability to have the active controller set via UART
 // but if you are sure you only want to use one type of controller you can set DEFAULT_CONTROLLER_TYPE
-// The chosen controller will be initialized at boot an UART commands to switch controller types
+// The chosen controller will be initialized at boot and UART commands to switch controller types
 // will be ignored.
 #define DEFAULT_CONTROLLER_TYPE GP_PSX
 
