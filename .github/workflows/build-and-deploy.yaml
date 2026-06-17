@@ -43,7 +43,6 @@ jobs:
           cp .pio/build/*/firmware.bin dist/firmware.bin
           cp .pio/build/*/bootloader.bin dist/bootloader.bin || true
           cp .pio/build/*/partitions.bin dist/partitions.bin || true
-          cp .pio/build/*/boot_app0.bin dist/boot_app0.bin || true
 
           # Copy web flasher page and WebSerialController.html
           cp WebFlash/index.html dist/index.html
@@ -65,10 +64,6 @@ jobs:
                   {
                     "path": "partitions.bin",
                     "offset": 32768
-                  },
-                  {
-                    "path": "boot_app0.bin",
-                    "offset": 57344
                   },
                   {
                     "path": "firmware.bin",
