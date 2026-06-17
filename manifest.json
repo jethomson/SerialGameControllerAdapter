@@ -1,9 +1,9 @@
 {
   "name": "Game Controller Adapter",
-  "version": "13d6f1bc43f26b5705806cb708df60047c3f6660",
+  "version": "5fb75ca3d0bb365e03099c17b2a95c97da4c8d3d",
   "builds": [
     {
-      "name": "No Controller",
+      "chipLabel": "No Controller",
       "chipFamily": "ESP32",
       "parts": [
         { "path": "bootloader.bin", "offset": 4096 },
@@ -12,7 +12,7 @@
       ]
     },
     {
-      "name": "GPIO Controller",
+      "chipLabel": "GPIO Controller",
       "chipFamily": "ESP32",
       "parts": [
         { "path": "bootloader.bin", "offset": 4096 },
@@ -21,7 +21,7 @@
       ]
     },
     {
-      "name": "NES Controller",
+      "chipLabel": "NES Controller",
       "chipFamily": "ESP32",
       "parts": [
         { "path": "bootloader.bin", "offset": 4096 },
@@ -30,7 +30,7 @@
       ]
     },
     {
-      "name": "SNES Controller",
+      "chipLabel": "SNES Controller",
       "chipFamily": "ESP32",
       "parts": [
         { "path": "bootloader.bin", "offset": 4096 },
@@ -39,7 +39,7 @@
       ]
     },
     {
-      "name": "PlayStation Controller (PSX)",
+      "chipLabel": "PlayStation Controller (PSX)",
       "chipFamily": "ESP32",
       "parts": [
         { "path": "bootloader.bin", "offset": 4096 },
@@ -48,7 +48,7 @@
       ]
     },
     {
-      "name": "Bluetooth Controller",
+      "chipLabel": "Bluetooth Controller",
       "chipFamily": "ESP32",
       "parts": [
         { "path": "bootloader.bin", "offset": 4096 },
