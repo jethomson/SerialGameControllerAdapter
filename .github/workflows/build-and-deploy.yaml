@@ -32,8 +32,13 @@ jobs:
       - name: Install PlatformIO
         run: pip install platformio
 
-      - name: Build firmware
-        run: pio run
+      - name: Build firmware (all controller types)
+        run: |
+          pio run -e psx
+          pio run -e nes
+          pio run -e snes
+          pio run -e gpio
+          pio run -e bluetooth
 
       - name: Prepare web flasher site
         run: |
@@ -48,32 +53,90 @@ jobs:
           cp WebFlash/index.html dist/index.html
           cp WebSerialController.html dist/WebSerialController.html
           
-          # Generate ESP Web Tools manifest
+          # NO CONTROLLER
+          cp .pio/build/nc/firmware.bin dist/nc_firmware.bin
+          cp .pio/build/nc/bootloader.bin dist/bootloader.bin || true
+          cp .pio/build/nc/partitions.bin dist/partitions.bin || true
+          
+          # GPIO
+          cp .pio/build/gpio/firmware.bin dist/gpio_firmware.bin
+          
+          # NES
+          cp .pio/build/nes/firmware.bin dist/nes_firmware.bin
+
+          # SNES
+          cp .pio/build/snes/firmware.bin dist/snes_firmware.bin
+
+          # PSX
+          cp .pio/build/psx/firmware.bin dist/psx_firmware.bin
+
+          # Bluetooth
+          cp .pio/build/bluetooth/firmware.bin dist/bt_firmware.bin
+          
+      - name: Generate ESP Web Tools manifest
+        run: |
           cat > dist/manifest.json <<EOF
+      {
+        "name": "Game Controller Adapter",
+        "version": "${GITHUB_SHA}",
+        "builds": [
           {
-            "name": "Serial Game Controller Adapter",
-            "version": "${GITHUB_SHA}",
-            "builds": [
-              {
-                "chipFamily": "ESP32",
-                "parts": [
-                  {
-                    "path": "bootloader.bin",
-                    "offset": 4096
-                  },
-                  {
-                    "path": "partitions.bin",
-                    "offset": 32768
-                  },
-                  {
-                    "path": "firmware.bin",
-                    "offset": 65536
-                  }
-                ]
-              }
+            "name": "No Controller",
+            "chipFamily": "ESP32",
+            "parts": [
+              { "path": "bootloader.bin", "offset": 4096 },
+              { "path": "partitions.bin", "offset": 32768 },
+              { "path": "nc_firmware.bin", "offset": 65536 }
+            ]
+          },
+          {
+            "name": "GPIO Controller",
+            "chipFamily": "ESP32",
+            "parts": [
+              { "path": "bootloader.bin", "offset": 4096 },
+              { "path": "partitions.bin", "offset": 32768 },
+              { "path": "gpio_firmware.bin", "offset": 65536 }
+            ]
+          },
+          {
+            "name": "NES Controller",
+            "chipFamily": "ESP32",
+            "parts": [
+              { "path": "bootloader.bin", "offset": 4096 },
+              { "path": "partitions.bin", "offset": 32768 },
+              { "path": "nes_firmware.bin", "offset": 65536 }
+            ]
+          },
+          {
+            "name": "SNES Controller",
+            "chipFamily": "ESP32",
+            "parts": [
+              { "path": "bootloader.bin", "offset": 4096 },
+              { "path": "partitions.bin", "offset": 32768 },
+              { "path": "snes_firmware.bin", "offset": 65536 }
+            ]
+          },
+          {
+            "name": "PlayStation Controller (PSX)",
+            "chipFamily": "ESP32",
+            "parts": [
+              { "path": "bootloader.bin", "offset": 4096 },
+              { "path": "partitions.bin", "offset": 32768 },
+              { "path": "psx_firmware.bin", "offset": 65536 }
+            ]
+          },
+          {
+            "name": "Bluetooth Controller",
+            "chipFamily": "ESP32",
+            "parts": [
+              { "path": "bootloader.bin", "offset": 4096 },
+              { "path": "partitions.bin", "offset": 32768 },
+              { "path": "bt_firmware.bin", "offset": 65536 }
             ]
           }
-          EOF
+        ]
+      }
+      EOF
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
