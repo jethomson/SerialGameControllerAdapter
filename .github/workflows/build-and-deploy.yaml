@@ -1,0 +1,55 @@
+name: Build ESP32 Firmware + Deploy Web Flasher
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Cache PlatformIO
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.platformio
+          key: ${{ runner.os }}-pio
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install PlatformIO
+        run: pip install platformio
+
+      - name: Build firmware
+        run: pio run
+
+      - name: Prepare web flasher site
+        run: |
+          mkdir -p dist
+
+          # Copy firmware artifacts (adjust board/env if needed)
+          cp .pio/build/*/firmware.bin dist/firmware.bin
+          cp .pio/build/*/bootloader.bin dist/bootloader.bin || true
+          cp .pio/build/*/partitions.bin dist/partitions.bin || true
+          cp .pio/build/*/boot_app0.bin dist/boot_app0.bin || true
+
+          # Copy web page
+          cp WebFlash/index.html dist/index.html
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist

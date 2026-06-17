@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>ESP32 Web Flasher</title>
+</head>
+
+<body>
+  <h2>ESP32 Firmware Flasher</h2>
+
+  <esp-web-install-button id="installButton"></esp-web-install-button>
+
+  <script type="module">
+    import "https://unpkg.com/esp-web-tools@10/dist/web/install-button.js";
+
+    const button = document.getElementById("installButton");
+
+    button.manifest = {
+      name: "ESP32 Firmware",
+      version: "1.0.0",
+      build: [
+        {
+          chipFamily: "ESP32",
+          parts: [
+            { path: "bootloader.bin", offset: 0x1000 },
+            { path: "partitions.bin", offset: 0x8000 },
+            { path: "boot_app0.bin", offset: 0xe000 },
+            { path: "firmware.bin", offset: 0x10000 }
+          ]
+        }
+      ]
+    };
+  </script>
+</body>
+</html>
