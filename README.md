@@ -26,8 +26,5 @@ See [ControllerConfig.h](https://github.com/jethomson/SerialGameControllerAdapte
 
 <img src="https://raw.githubusercontent.com/jethomson/jethomson.github.io/refs/heads/main/SerialGameControllerAdapter_images/webserial_controller.png" width="60%">
 
-[WebSerialController.html](https://htmlpreview.github.io/?https://raw.githubusercontent.com/jethomson/SerialGameControllerAdapter/refs/heads/main/WebSerialController.html) is a webpage that uses WebSerial to send button presses to Anemoia-ESP32 over the USB cable.
+[WebSerialController.html](https://jethomson.github.io/SerialGameControllerAdapter/WebSerialController.html) is a webpage that uses WebSerial to send button presses to Anemoia-ESP32 over the USB cable.
 This webpage is nice for testing out Anemoia-ESP32 before doing any wiring or soldering. Of course, if you want to use Anemoia-ESP32 without a wired controller, then WebSerialController.html is all you need to control it. **No wiring is required!**
-
-For everyday use, please download WebSerialController.html and use a local copy instead of using the version hosted on htmlpreview.github.io. That site is only meant for previewing web pages.
-

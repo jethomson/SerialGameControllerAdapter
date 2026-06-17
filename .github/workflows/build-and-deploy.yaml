@@ -48,6 +48,37 @@ jobs:
           # Copy web flasher page and WebSerialController.html
           cp WebFlash/index.html dist/index.html
           cp WebSerialController.html dist/WebSerialController.html
+          
+          # Generate ESP Web Tools manifest
+          cat > dist/manifest.json <<EOF
+          {
+            "name": "Serial Game Controller Adapter",
+            "version": "${GITHUB_SHA}",
+            "builds": [
+              {
+                "chipFamily": "ESP32",
+                "parts": [
+                  {
+                    "path": "bootloader.bin",
+                    "offset": 4096
+                  },
+                  {
+                    "path": "partitions.bin",
+                    "offset": 32768
+                  },
+                  {
+                    "path": "boot_app0.bin",
+                    "offset": 57344
+                  },
+                  {
+                    "path": "firmware.bin",
+                    "offset": 65536
+                  }
+                ]
+              }
+            ]
+          }
+          EOF
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
