@@ -77,7 +77,7 @@ jobs:
             "version": "${GITHUB_SHA}",
             "builds": [
               {
-                "name": "No Controller",
+                "chipLabel": "No Controller",
                 "chipFamily": "ESP32",
                 "parts": [
                   { "path": "bootloader.bin", "offset": 4096 },
@@ -86,7 +86,7 @@ jobs:
                 ]
               },
               {
-                "name": "GPIO Controller",
+                "chipLabel": "GPIO Controller",
                 "chipFamily": "ESP32",
                 "parts": [
                   { "path": "bootloader.bin", "offset": 4096 },
@@ -95,7 +95,7 @@ jobs:
                 ]
               },
               {
-                "name": "NES Controller",
+                "chipLabel": "NES Controller",
                 "chipFamily": "ESP32",
                 "parts": [
                   { "path": "bootloader.bin", "offset": 4096 },
@@ -104,7 +104,7 @@ jobs:
                 ]
               },
               {
-                "name": "SNES Controller",
+                "chipLabel": "SNES Controller",
                 "chipFamily": "ESP32",
                 "parts": [
                   { "path": "bootloader.bin", "offset": 4096 },
@@ -113,7 +113,7 @@ jobs:
                 ]
               },
               {
-                "name": "PlayStation Controller (PSX)",
+                "chipLabel": "PlayStation Controller (PSX)",
                 "chipFamily": "ESP32",
                 "parts": [
                   { "path": "bootloader.bin", "offset": 4096 },
@@ -122,7 +122,7 @@ jobs:
                 ]
               },
               {
-                "name": "Bluetooth Controller",
+                "chipLabel": "Bluetooth Controller",
                 "chipFamily": "ESP32",
                 "parts": [
                   { "path": "bootloader.bin", "offset": 4096 },
