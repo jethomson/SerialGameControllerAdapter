@@ -1,22 +1,59 @@
 {
-  "name": "Serial Game Controller Adapter",
-  "version": "b3ffc8a9e37ebbbde35592ed0d8f9d387a53df32",
+  "name": "Game Controller Adapter",
+  "version": "13d6f1bc43f26b5705806cb708df60047c3f6660",
   "builds": [
     {
+      "name": "No Controller",
       "chipFamily": "ESP32",
       "parts": [
-        {
-          "path": "bootloader.bin",
-          "offset": 4096
-        },
-        {
-          "path": "partitions.bin",
-          "offset": 32768
-        },
-        {
-          "path": "firmware.bin",
-          "offset": 65536
-        }
+        { "path": "bootloader.bin", "offset": 4096 },
+        { "path": "partitions.bin", "offset": 32768 },
+        { "path": "nc_firmware.bin", "offset": 65536 }
+      ]
+    },
+    {
+      "name": "GPIO Controller",
+      "chipFamily": "ESP32",
+      "parts": [
+        { "path": "bootloader.bin", "offset": 4096 },
+        { "path": "partitions.bin", "offset": 32768 },
+        { "path": "gpio_firmware.bin", "offset": 65536 }
+      ]
+    },
+    {
+      "name": "NES Controller",
+      "chipFamily": "ESP32",
+      "parts": [
+        { "path": "bootloader.bin", "offset": 4096 },
+        { "path": "partitions.bin", "offset": 32768 },
+        { "path": "nes_firmware.bin", "offset": 65536 }
+      ]
+    },
+    {
+      "name": "SNES Controller",
+      "chipFamily": "ESP32",
+      "parts": [
+        { "path": "bootloader.bin", "offset": 4096 },
+        { "path": "partitions.bin", "offset": 32768 },
+        { "path": "snes_firmware.bin", "offset": 65536 }
+      ]
+    },
+    {
+      "name": "PlayStation Controller (PSX)",
+      "chipFamily": "ESP32",
+      "parts": [
+        { "path": "bootloader.bin", "offset": 4096 },
+        { "path": "partitions.bin", "offset": 32768 },
+        { "path": "psx_firmware.bin", "offset": 65536 }
+      ]
+    },
+    {
+      "name": "Bluetooth Controller",
+      "chipFamily": "ESP32",
+      "parts": [
+        { "path": "bootloader.bin", "offset": 4096 },
+        { "path": "partitions.bin", "offset": 32768 },
+        { "path": "bt_firmware.bin", "offset": 65536 }
       ]
     }
   ]
