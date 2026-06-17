@@ -44,11 +44,6 @@ jobs:
         run: |
           mkdir -p dist
 
-          # Copy firmware artifacts (adjust board/env if needed)
-          cp .pio/build/*/firmware.bin dist/firmware.bin
-          cp .pio/build/*/bootloader.bin dist/bootloader.bin || true
-          cp .pio/build/*/partitions.bin dist/partitions.bin || true
-
           # Copy web flasher page and WebSerialController.html
           cp WebFlash/index.html dist/index.html
           cp WebSerialController.html dist/WebSerialController.html
