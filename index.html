@@ -3,12 +3,50 @@
 <head>
   <meta charset="utf-8" />
   <title>ESP32 Web Flasher</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+
+    .nav {
+      margin-bottom: 2rem;
+    }
+
+    .nav a {
+      display: inline-block;
+      margin-right: 1rem;
+      padding: 0.5rem 1rem;
+      text-decoration: none;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+  </style>
 </head>
 
 <body>
+
   <h2>ESP32 Firmware Flasher</h2>
 
+  <p>
+    Use Chrome, Edge, or another browser with Web Serial support to
+    flash firmware directly to your ESP32.
+  </p>
+
   <esp-web-install-button id="installButton"></esp-web-install-button>
+  
+  <br>
+  <br>
+  <hr>
+  <br>
+
+  <div class="nav">
+    After flashing has completed, try out the firmware with the
+    <a href="./WebSerialController.html">Web Serial Controller</a>
+  </div>
 
   <script type="module">
     import "https://unpkg.com/esp-web-tools@10/dist/web/install-button.js";
@@ -31,5 +69,6 @@
       ]
     };
   </script>
+
 </body>
 </html>
