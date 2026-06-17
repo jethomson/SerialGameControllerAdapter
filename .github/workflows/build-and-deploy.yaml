@@ -76,67 +76,67 @@ jobs:
       - name: Generate ESP Web Tools manifest
         run: |
           cat > dist/manifest.json <<EOF
-      {
-        "name": "Game Controller Adapter",
-        "version": "${GITHUB_SHA}",
-        "builds": [
           {
-            "name": "No Controller",
-            "chipFamily": "ESP32",
-            "parts": [
-              { "path": "bootloader.bin", "offset": 4096 },
-              { "path": "partitions.bin", "offset": 32768 },
-              { "path": "nc_firmware.bin", "offset": 65536 }
-            ]
-          },
-          {
-            "name": "GPIO Controller",
-            "chipFamily": "ESP32",
-            "parts": [
-              { "path": "bootloader.bin", "offset": 4096 },
-              { "path": "partitions.bin", "offset": 32768 },
-              { "path": "gpio_firmware.bin", "offset": 65536 }
-            ]
-          },
-          {
-            "name": "NES Controller",
-            "chipFamily": "ESP32",
-            "parts": [
-              { "path": "bootloader.bin", "offset": 4096 },
-              { "path": "partitions.bin", "offset": 32768 },
-              { "path": "nes_firmware.bin", "offset": 65536 }
-            ]
-          },
-          {
-            "name": "SNES Controller",
-            "chipFamily": "ESP32",
-            "parts": [
-              { "path": "bootloader.bin", "offset": 4096 },
-              { "path": "partitions.bin", "offset": 32768 },
-              { "path": "snes_firmware.bin", "offset": 65536 }
-            ]
-          },
-          {
-            "name": "PlayStation Controller (PSX)",
-            "chipFamily": "ESP32",
-            "parts": [
-              { "path": "bootloader.bin", "offset": 4096 },
-              { "path": "partitions.bin", "offset": 32768 },
-              { "path": "psx_firmware.bin", "offset": 65536 }
-            ]
-          },
-          {
-            "name": "Bluetooth Controller",
-            "chipFamily": "ESP32",
-            "parts": [
-              { "path": "bootloader.bin", "offset": 4096 },
-              { "path": "partitions.bin", "offset": 32768 },
-              { "path": "bt_firmware.bin", "offset": 65536 }
+            "name": "Game Controller Adapter",
+            "version": "${GITHUB_SHA}",
+            "builds": [
+              {
+                "name": "No Controller",
+                "chipFamily": "ESP32",
+                "parts": [
+                  { "path": "bootloader.bin", "offset": 4096 },
+                  { "path": "partitions.bin", "offset": 32768 },
+                  { "path": "nc_firmware.bin", "offset": 65536 }
+                ]
+              },
+              {
+                "name": "GPIO Controller",
+                "chipFamily": "ESP32",
+                "parts": [
+                  { "path": "bootloader.bin", "offset": 4096 },
+                  { "path": "partitions.bin", "offset": 32768 },
+                  { "path": "gpio_firmware.bin", "offset": 65536 }
+                ]
+              },
+              {
+                "name": "NES Controller",
+                "chipFamily": "ESP32",
+                "parts": [
+                  { "path": "bootloader.bin", "offset": 4096 },
+                  { "path": "partitions.bin", "offset": 32768 },
+                  { "path": "nes_firmware.bin", "offset": 65536 }
+                ]
+              },
+              {
+                "name": "SNES Controller",
+                "chipFamily": "ESP32",
+                "parts": [
+                  { "path": "bootloader.bin", "offset": 4096 },
+                  { "path": "partitions.bin", "offset": 32768 },
+                  { "path": "snes_firmware.bin", "offset": 65536 }
+                ]
+              },
+              {
+                "name": "PlayStation Controller (PSX)",
+                "chipFamily": "ESP32",
+                "parts": [
+                  { "path": "bootloader.bin", "offset": 4096 },
+                  { "path": "partitions.bin", "offset": 32768 },
+                  { "path": "psx_firmware.bin", "offset": 65536 }
+                ]
+              },
+              {
+                "name": "Bluetooth Controller",
+                "chipFamily": "ESP32",
+                "parts": [
+                  { "path": "bootloader.bin", "offset": 4096 },
+                  { "path": "partitions.bin", "offset": 32768 },
+                  { "path": "bt_firmware.bin", "offset": 65536 }
+                ]
+              }
             ]
           }
-        ]
-      }
-      EOF
+          EOF
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
