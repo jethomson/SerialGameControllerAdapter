@@ -34,10 +34,11 @@ jobs:
 
       - name: Build firmware (all controller types)
         run: |
-          pio run -e psx
+          pio run -e nc
+          pio run -e gpio
           pio run -e nes
           pio run -e snes
-          pio run -e gpio
+          pio run -e psx
           pio run -e bluetooth
 
       - name: Prepare web flasher site
