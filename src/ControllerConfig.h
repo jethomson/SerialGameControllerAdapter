@@ -6,7 +6,7 @@
 // but if you are sure you only want to use one type of controller you can set DEFAULT_CONTROLLER_TYPE
 // The chosen controller will be initialized at boot and UART commands to switch controller types
 // will be ignored.
-#define DEFAULT_CONTROLLER_TYPE GP_PSX
+//#define DEFAULT_CONTROLLER_TYPE GP_PSX
 
 
 #define CONTROLLER_UART_RX 21 // to CYD 27

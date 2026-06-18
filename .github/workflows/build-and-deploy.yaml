@@ -31,108 +31,56 @@ jobs:
 
       - name: Install PlatformIO
         run: pip install platformio
+        
+      - name: Install mklittlefs
+        run: |
+          curl -sL https://github.com/earlephilhower/mklittlefs/releases/download/4.1.0/x86_64-linux-gnu-mklittlefs-42acb97.tar.gz | tar xz
+          sudo mv mklittlefs/mklittlefs /usr/local/bin/
+          sudo chmod +x /usr/local/bin/mklittlefs
 
       - name: Build firmware (all controller types)
-        run: |
-          pio run -e nc
-          pio run -e gpio
-          pio run -e nes
-          pio run -e snes
-          pio run -e psx
-          pio run -e bluetooth
+        run: pio run
 
       - name: Prepare web flasher site
         run: |
           mkdir -p dist
 
+          # Copy firmware artifacts
+          cp .pio/build/firmware.bin dist/firmware.bin
+          cp .pio/build/bootloader.bin dist/bootloader.bin || true
+          cp .pio/build/partitions.bin dist/partitions.bin || true
+
           # Copy web flasher page and WebSerialController.html
           cp WebFlash/index.html dist/index.html
           cp WebSerialController.html dist/WebSerialController.html
-          
-          # NO CONTROLLER
-          cp .pio/build/nc/firmware.bin dist/nc_firmware.bin
-          cp .pio/build/nc/bootloader.bin dist/bootloader.bin || true
-          cp .pio/build/nc/partitions.bin dist/partitions.bin || true
-          
-          # GPIO
-          cp .pio/build/gpio/firmware.bin dist/gpio_firmware.bin
-          
-          # NES
-          cp .pio/build/nes/firmware.bin dist/nes_firmware.bin
 
-          # SNES
-          cp .pio/build/snes/firmware.bin dist/snes_firmware.bin
-
-          # PSX
-          cp .pio/build/psx/firmware.bin dist/psx_firmware.bin
-
-          # Bluetooth
-          cp .pio/build/bluetooth/firmware.bin dist/bt_firmware.bin
-          
       - name: Generate ESP Web Tools manifest
         run: |
-          cat > dist/manifest.json <<EOF
-          {
-            "name": "Game Controller Adapter",
-            "version": "${GITHUB_SHA}",
-            "builds": [
-              {
-                "chipLabel": "No Controller",
-                "chipFamily": "ESP32",
-                "parts": [
-                  { "path": "bootloader.bin", "offset": 4096 },
-                  { "path": "partitions.bin", "offset": 32768 },
-                  { "path": "nc_firmware.bin", "offset": 65536 }
-                ]
-              },
-              {
-                "chipLabel": "GPIO Controller",
-                "chipFamily": "ESP32",
-                "parts": [
-                  { "path": "bootloader.bin", "offset": 4096 },
-                  { "path": "partitions.bin", "offset": 32768 },
-                  { "path": "gpio_firmware.bin", "offset": 65536 }
-                ]
-              },
-              {
-                "chipLabel": "NES Controller",
-                "chipFamily": "ESP32",
-                "parts": [
-                  { "path": "bootloader.bin", "offset": 4096 },
-                  { "path": "partitions.bin", "offset": 32768 },
-                  { "path": "nes_firmware.bin", "offset": 65536 }
-                ]
-              },
-              {
-                "chipLabel": "SNES Controller",
-                "chipFamily": "ESP32",
-                "parts": [
-                  { "path": "bootloader.bin", "offset": 4096 },
-                  { "path": "partitions.bin", "offset": 32768 },
-                  { "path": "snes_firmware.bin", "offset": 65536 }
-                ]
-              },
-              {
-                "chipLabel": "PlayStation Controller (PSX)",
-                "chipFamily": "ESP32",
-                "parts": [
-                  { "path": "bootloader.bin", "offset": 4096 },
-                  { "path": "partitions.bin", "offset": 32768 },
-                  { "path": "psx_firmware.bin", "offset": 65536 }
-                ]
-              },
-              {
-                "chipLabel": "Bluetooth Controller",
-                "chipFamily": "ESP32",
-                "parts": [
-                  { "path": "bootloader.bin", "offset": 4096 },
-                  { "path": "partitions.bin", "offset": 32768 },
-                  { "path": "bt_firmware.bin", "offset": 65536 }
-                ]
-              }
-            ]
-          }
-          EOF
+          CONTROLLERS="no_controller gpio nes snes psx bluetooth"
+          CONTROLLER_LIST="$CONTROLLERS"
+
+          for CONTROLLER in $CONTROLLER_LIST; do
+            case "$CONTROLLER" in
+              no_controller) CONTROLLER_VAL=255 ;;
+              gpio) CONTROLLER_VAL=0 ;;
+              nes) CONTROLLER_VAL=1 ;;
+              snes) CONTROLLER_VAL=2 ;;
+              psx) CONTROLLER_VAL=3 ;;
+              bluetooth) CONTROLLER_VAL=4 ;;
+            esac
+
+            # Write controller type to binary file and create LittleFS image
+            CFG_NAME="$CONTROLLER-config.bin"
+            mkdir -p tmp/fs_stage
+            printf "$(printf '\\%03o' $CONTROLLER_VAL)" \
+                > tmp/fs_stage/runtime_config.bin
+            mklittlefs -c tmp/fs_stage -s 0x0F000 "dist/$CFG_NAME"
+            rm -rf "tmp/fs_stage"
+
+            printf '{\n  "name": "Serial Game Controller Adapter",\n  "version": "1.0.0",\n  "builds": [{\n    "chipFamily": "ESP32",\n    "parts": [\n      { "path": "bootloader.bin", "offset": 4096 },\n      { "path": "partitions.bin", "offset": 32768 },\n      { "path": "firmware.bin",   "offset": 65536 },\n      { "path": "%s",        "offset": 3866624 }\n    ]\n  }]\n}' \
+              "$CFG_NAME" \
+              > "dist/$CONTROLLER.json"
+          done
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4

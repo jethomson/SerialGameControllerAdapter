@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <Bluepad32.h>
 #include <stdint.h>
+#include <LittleFS.h>
 #include "ControllerConfig.h"
 
 #define LED_PIN 2
@@ -44,7 +45,7 @@ enum ControllerType : uint8_t {
     GP_SNES = 2,   // wired SNES controller
     GP_PSX = 3,    // wired playstation controller using playstation connector
     // bluetooth gamepad and bluetooth keyboard are combined to simplify the potential UI
-    CTL_BLUETOOTH_CONTROLLER = 5
+    CTL_BLUETOOTH_CONTROLLER = 4
 };
 
 enum Buttons : uint8_t {
@@ -536,11 +537,26 @@ void setup() {
     pinMode(LED_PIN, OUTPUT);
     digitalWrite(LED_PIN, LOW);
 
-#ifndef DEFAULT_CONTROLLER_TYPE
-    initController((ControllerType)CTL_NC);
+
+    ControllerType controller_type;
+    controller_type = CTL_NC;
+#ifdef DEFAULT_CONTROLLER_TYPE
+    controller_type = DEFAULT_CONTROLLER_TYPE;
 #else
-    initController((ControllerType)DEFAULT_CONTROLLER_TYPE);
+    if (LittleFS.begin()) {
+        DEBUG_PRINTLN("LittleFS mounted");
+        File f = LittleFS.open("/runtime_config.bin", "r");
+        if (f) {
+            DEBUG_PRINTLN("runtime_config.bin opened");
+            f.read((uint8_t*)&controller_type, sizeof(controller_type));
+            f.close();
+            DEBUG_PRINTLN("runtime_config.bin read successfully");
+            DEBUG_PRINTF("controller_type: %d\n", cfg.controller_type);
+        }
+    }
 #endif
+    
+    initController((ControllerType)controller_type);
 }
 
 
