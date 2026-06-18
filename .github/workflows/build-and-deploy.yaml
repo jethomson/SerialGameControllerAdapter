@@ -77,7 +77,7 @@ jobs:
             mklittlefs -c tmp/fs_stage -s 0x0F000 "dist/$CFG_NAME"
             rm -rf "tmp/fs_stage"
 
-            printf '{\n  "name": "Serial Game Controller Adapter",\n  "version": "1.0.0",\n  "builds": [{\n    "chipFamily": "ESP32",\n    "parts": [\n      { "path": "bootloader.bin", "offset": 4096 },\n      { "path": "partitions.bin", "offset": 32768 },\n      { "path": "firmware.bin",   "offset": 65536 },\n      { "path": "%s",        "offset": 3866624 }\n    ]\n  }]\n}' \
+            printf '{\n  "name": "Serial Game Controller Adapter",\n  "version": "1.0.0",\n  "builds": [{\n    "chipFamily": "ESP32",\n    "parts": [\n      { "path": "bootloader.bin", "offset": 4096 },\n      { "path": "partitions.bin", "offset": 32768 },\n      { "path": "firmware.bin",   "offset": 65536 },\n      { "path": "%s",        "offset": 2686976 }\n    ]\n  }]\n}' \
               "$CFG_NAME" \
               > "dist/$CONTROLLER.json"
           done
