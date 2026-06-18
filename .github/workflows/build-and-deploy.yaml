@@ -38,7 +38,7 @@ jobs:
           sudo mv mklittlefs/mklittlefs /usr/local/bin/
           sudo chmod +x /usr/local/bin/mklittlefs
 
-      - name: Build firmware (all controller types)
+      - name: Build firmware
         run: pio run
 
       - name: Prepare web flasher site
@@ -46,9 +46,9 @@ jobs:
           mkdir -p dist
 
           # Copy firmware artifacts
-          cp .pio/build/firmware.bin dist/firmware.bin
-          cp .pio/build/bootloader.bin dist/bootloader.bin || true
-          cp .pio/build/partitions.bin dist/partitions.bin || true
+          cp .pio/build/*/firmware.bin dist/firmware.bin
+          cp .pio/build/*/bootloader.bin dist/bootloader.bin || true
+          cp .pio/build/*/partitions.bin dist/partitions.bin || true
 
           # Copy web flasher page and WebSerialController.html
           cp WebFlash/index.html dist/index.html
