@@ -2,8 +2,10 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>ESP32 Web Flasher</title>
-
+  <title>ESP32 Serial Game Controller Adapter Web Flasher</title>
+  <script type="module">
+    import "https://unpkg.com/esp-web-tools@10/dist/web/install-button.js";
+  </script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -12,44 +14,112 @@
       padding: 1rem;
     }
 
-    .nav {
-      margin-bottom: 2rem;
+    .text-block {
+      margin: 20px auto;
+      padding: 18px 22px;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      font-family: system-ui, sans-serif;
+      line-height: 1.6;
+      font-size: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
 
-    .nav a {
-      display: inline-block;
-      margin-right: 1rem;
-      padding: 0.5rem 1rem;
-      text-decoration: none;
+    select {
+      padding: 8px 10px;
+      border-radius: 6px;
       border: 1px solid #ccc;
-      border-radius: 4px;
+      font-size: 14px;
     }
+
   </style>
 </head>
 
 <body>
 
-  <h2>ESP32 Firmware Flasher</h2>
-
-  <p>
-    Use Chrome, Edge, or another browser with Web Serial support to
-    flash firmware directly to your ESP32.
-  </p>
-
-  <esp-web-install-button manifest="manifest.json"></esp-web-install-button>
+  <div id="main" style="display:none">
+    <h2>ESP32 Serial Game Controller Adapter Firmware Flasher</h2>
+    
+    <div class="text-block">
+      This firmware is aimed at making it easier to use a controller with a Cheap Yellow Display (CYD). This firmware is for a supplementary EPS32 board that sends controller input to the CYD on the Serial1 port. Using a supplementary board makes it easier to wire different controllers or use a bluetooth controller. See the <a href="https://github.com/Shim06/Anemoia-ESP32">Anemoia-ESP32</a> project for more info on running a NES emulator on a CYD.
+    </div>
   
+    <!-- Controller type (runtime) -->
+    <div id="controllerOption">
+      <label for="controllerSelect">Controller:</label>
+   
+      <select id="controllerSelect" name="controller">
+        <option value="no_controller" title="For testing or a passive display piece">
+          No Controller
+        </option>
+    
+        <option value="gpio" title="Custom">
+          GPIO Buttons
+        </option>
+    
+        <option value="nes" title="Nintendo">
+          NES Controller
+        </option>
+    
+        <option value="snes" title="Super Nintendo" selected>
+          SNES Controller
+        </option>
+    
+        <option value="psx" title="PlayStation 1 and 2">
+          PSX Controller
+        </option>
+    
+        <option value="bluetooth" title="Bluetooth Gamepad or Keyboard">
+          Bluetooth
+        </option>
+      </select>
+    </div>
+
+    <br>
+    <esp-web-install-button id="installButton"></esp-web-install-button>
+  </div>  
+  
+  <div id="notSupported" style="display:none">
+    Your browser does not support the Web Serial API. Use Chrome or Edge.
+  </div>
+
   <br>
   <br>
   <hr>
   <br>
-
-  <div class="nav">
-    After flashing has completed, try out the firmware with the
-    <a href="./WebSerialController.html">Web Serial Controller</a>
+  <div class="text-block">
+    As an alternative to the Serial Game Controller Adapter, you can use the <a href="./WebSerialController.html">Web Serial Controller</a> web page to send control inputs from your PC to the ESP32 NES emulator over the USB to Serial (Serial0) connection. Neither an additional board nor wiring is required!
   </div>
 
-  <script type="module">
-    import "https://unpkg.com/esp-web-tools@10/dist/web/install-button.js";
+  <script>
+    function updateManifest() {
+      const select = document.getElementById("controllerSelect");
+      let controller = select?.value;
+      
+      if (!controller) {
+        controller = "snes";
+        select.value = controller;
+      }
+
+      const manifestPath = controller + ".json";
+      console.log(manifestPath);
+      const installButton = document.getElementById("installButton");
+      installButton.manifest = manifestPath;
+    }
+    
+    document.getElementById("controllerSelect")
+      .addEventListener("change", () => {
+        updateManifest();
+      });
+
+    updateManifest();
+    
+    if (navigator.serial) {
+      document.getElementById("main").style.display = "block";
+    } else {
+      document.getElementById("notSupported").style.display = "block";
+    }
   </script>
 
 </body>
