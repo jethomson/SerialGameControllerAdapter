@@ -74,7 +74,6 @@ jobs:
             mkdir -p tmp/fs_stage
             printf "$(printf '\\%03o' $CONTROLLER_VAL)" \
                 > tmp/fs_stage/runtime_config.bin
-            cp tmp/fs_stage/runtime_config.bin "dist/$CONTROLLER-runtime_config.bin"
             mklittlefs -c tmp/fs_stage -s 0x0F000 "dist/$CFG_NAME"
 
             rm -rf "tmp/fs_stage"
