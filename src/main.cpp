@@ -151,9 +151,7 @@ void initController(ControllerType controller_type) {
 
 
 void indicateRead() {
-#ifdef LED_PIN
     digitalWrite(LED_PIN, HIGH);
-#endif
 }
 
 
@@ -551,7 +549,7 @@ void setup() {
             f.read((uint8_t*)&controller_type, sizeof(controller_type));
             f.close();
             DEBUG_PRINTLN("runtime_config.bin read successfully");
-            DEBUG_PRINTF("controller_type: %d\n", cfg.controller_type);
+            DEBUG_PRINTF("controller_type: %d\n", controller_type);
         }
     }
 #endif
