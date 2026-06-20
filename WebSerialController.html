@@ -147,6 +147,7 @@ async function connectSerial() {
     status.textContent = "Connected";
     const controller = document.getElementById("controller");
   } catch (e) {
+    console.error("Serial connection error:", e);
     status.textContent = "Connection failed";
   }
   // set focus back to controller
