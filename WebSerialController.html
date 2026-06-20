@@ -88,18 +88,18 @@
   <rect id="btnRight" class="btn" x="120" y="100" width="40" height="40"/>
 
   <!-- Center buttons -->
-  <rect id="btnSelect" class="btn" x="230" y="150" width="70" height="25" rx="5"/>
-  <rect id="btnStart" class="btn" x="310" y="150" width="70" height="25" rx="5"/>
+  <rect id="btnSelect" class="btn" x="215" y="150" width="70" height="25" rx="5"/>
+  <rect id="btnStart" class="btn" x="295" y="150" width="70" height="25" rx="5"/>
 
-  <text x="241" y="167" class="label no-highlight">SELECT</text>
-  <text x="326" y="167" class="label no-highlight">START</text>
+  <text x="226" y="167" class="label no-highlight">SELECT</text>
+  <text x="311" y="167" class="label no-highlight">START</text>
 
   <!-- A / B -->
-  <circle id="btnB" class="btn" cx="460" cy="165" r="25"/>
-  <circle id="btnA" class="btn" cx="520" cy="165" r="25"/>
+  <circle id="btnB" class="btn" cx="445" cy="162" r="40"/>
+  <circle id="btnA" class="btn" cx="535" cy="162" r="40"/>
 
-  <text x="455" y="170" class="label no-highlight">B</text>
-  <text x="515" y="170" class="label no-highlight">A</text>
+  <text x="440" y="166" class="label no-highlight">B</text>
+  <text x="530" y="166" class="label no-highlight">A</text>
 
 </svg>
 
@@ -246,10 +246,15 @@ document.querySelectorAll(".btn").forEach(el => {
   el.addEventListener("pointerleave", () => release(el.id));
 });
 
-// using left and right click as B and A when point is not over a clickable button
-const controller = document.getElementById("controller"); 
+const controller = document.getElementById("controller");
+// prevent right click menu so right mouse button can be used as A
+// and so multitouch will not bring up the menu
 controller.addEventListener("contextmenu", e => e.preventDefault());
-controller.addEventListener("pointerdown", (e) => {
+
+// using left and right click as B and A when point is not over a clickable button
+// mouse events are used instead of pointer events to prevent interference
+// with touch
+controller.addEventListener("mousedown", (e) => {
     if (e.button === 0 ) {
         mouseControllerState |= map["btnB"]; // left click down for press B
     }
@@ -258,7 +263,7 @@ controller.addEventListener("pointerdown", (e) => {
     }
     updateControllerState();
 });
-controller.addEventListener("pointermove", (e) => {
+controller.addEventListener("mousemove", (e) => {
     if (e.buttons === 1) {
         mouseControllerState |= map["btnB"]; // left click down for press B
         mouseControllerState &= ~map["btnA"]; // right click up for release A
@@ -275,7 +280,7 @@ controller.addEventListener("pointermove", (e) => {
         updateControllerState();
     }
 });
-controller.addEventListener("pointerup", (e) => {
+controller.addEventListener("mouseup", (e) => {
     if (e.button === 0) {
         mouseControllerState &= ~map["btnB"]; // left click up for release B
     }
@@ -284,7 +289,7 @@ controller.addEventListener("pointerup", (e) => {
     }
     updateControllerState();
 });
-controller.addEventListener("pointerleave", (e) => {
+controller.addEventListener("mouseleave", (e) => {
     mouseControllerState = 0;
     updateControllerState();
 });
